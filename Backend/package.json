@@ -1,0 +1,33 @@
+{
+  "name": "graphql-yoga-server",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon --watch src --exec ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.0.1",
+    "@fastify/websocket": "^11.1.0",
+    "@types/graphql": "^14.2.3",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "fastify": "^5.3.3",
+    "graphql": "^16.11.0",
+    "graphql-http": "^1.22.4",
+    "graphql-ws": "^6.0.5",
+    "graphql-yoga": "^5.13.5",
+    "undici": "^7.10.0",
+    "uuid": "^11.1.0",
+    "ws": "^8.18.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.29",
+    "@types/uuid": "^10.0.0",
+    "@types/ws": "^8.18.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
