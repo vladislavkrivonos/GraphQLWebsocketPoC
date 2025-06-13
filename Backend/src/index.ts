@@ -7,8 +7,12 @@ import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/use/ws';
 import { createPubSub } from 'graphql-yoga';
 
-const pubSub = createPubSub();
+const pubSub = createPubSub<{
+  MESSAGE_EVENT: [topic: string, payload: { messageEvent: {type: string, message: string} }]
+}>();
 const MESSAGE_EVENT = 'MESSAGE_EVENT';
+const SPECIFIC_TOPIC = 'SPECIFIC_TOPIC';
+const GENERAL_TOPIC = 'GENERAL_TOPIC';
 
 // Define your GraphQL schema
 const schema = new GraphQLSchema({
@@ -30,7 +34,16 @@ const schema = new GraphQLSchema({
           message: { type: new GraphQLNonNull(GraphQLString) },
         },
         resolve: (_, { message }) => {
-          pubSub.publish(MESSAGE_EVENT, { messageEvent: { type: 'CREATED', message } });
+          const strMessage = message as string;
+          console.log(strMessage);
+          if (strMessage.startsWith(SPECIFIC_TOPIC)) {
+            console.log('created specific');
+            pubSub.publish(MESSAGE_EVENT, GENERAL_TOPIC, { messageEvent: { type: 'CREATED', message } });
+            pubSub.publish(MESSAGE_EVENT, SPECIFIC_TOPIC, { messageEvent: { type: 'CREATED', message } }); // Specific topic publish
+          } else {
+            console.log('created normal');
+            pubSub.publish(MESSAGE_EVENT, GENERAL_TOPIC, { messageEvent: { type: 'CREATED', message } });
+          }
           return `Sent: ${message}`;
         },
       },
@@ -41,7 +54,20 @@ const schema = new GraphQLSchema({
     fields: {
       greetings: {
         type: GraphQLString,
-        subscribe: () => pubSub.subscribe(MESSAGE_EVENT),
+        subscribe: () => pubSub.subscribe(MESSAGE_EVENT, GENERAL_TOPIC),
+        resolve: (payload: any) => JSON.stringify(payload.messageEvent),
+      },
+      specific: {
+        type: GraphQLString,
+        args: {
+          topic: { type: new GraphQLNonNull(GraphQLString) },
+        },
+        subscribe: (_parent, args, _context, _info) => {
+          console.log(args);
+          const { topic } = args;
+          console.log(topic);
+          return pubSub.subscribe(MESSAGE_EVENT, topic);
+        },
         resolve: (payload: any) => JSON.stringify(payload.messageEvent),
       }
     },

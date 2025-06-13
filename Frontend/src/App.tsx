@@ -2,6 +2,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { MessageList } from './components/MessageList';
 import { NewMessageForm } from './components/NewMessageForm';
 import { OtherPage } from './components/OtherPage';
+import { MessageListSpecific } from './components/MessageListSpecific';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
             <>
               <NewMessageForm />
               <MessageList />
+              <MessageListSpecific />
             </>
           }
         />
